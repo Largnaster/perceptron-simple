@@ -68,6 +68,7 @@ export default function Neurona() {
   const [wtwo, setWtwo] = useState(0);
 
   const countRef = useRef(0);
+  const [iteraciones, setIteraciones] = useState(0)
 
   // Valores para las pruebas
   const [result, setResult] = useState(0);
@@ -87,9 +88,7 @@ export default function Neurona() {
   };
 
   const reset = () => {
-    console.log(
-      `Valores finales: Error ${error}, Factor ${e}, W1 ${wone}, W2 ${wtwo}`
-    );
+    setIteraciones(countRef.current)
     countRef.current = 0;
     console.log("VALORES RESETEADOS\n");
   };
@@ -98,15 +97,12 @@ export default function Neurona() {
     setE(ce);
     setWone(cw1);
     setWtwo(cw2);
-    console.log(
-      `Valores sdfbethgfngf: Error ${error}, Factor ${e}, W1 ${wone}, W2 ${wtwo}`
-    );
   };
 
   const entrenar = async (erro: number, e: number, w1: number, w2: number) => {
     // setIteraciones(iteraciones +1);
     console.log("Iteracion: ", countRef.current++);
-    if (countRef.current < 10) {
+    if (countRef.current < 100) {
       console.log("entrenar: ", erro, e, w1, w2);
       // Obtener el valor de la primera salida
       const y1 = Math.round(Math.tanh(1 * w1 + 1 * w2) - erro) < 0 ? -1 : 1;
@@ -130,6 +126,7 @@ export default function Neurona() {
     } else {
       console.log("Muchas iteracines");
       cambio(erro, e, w1, w2);
+      alert("Se alcanzó el límite de 100 iteraciones, por favor cambie los valores")
       await reset();
       return;
     }
@@ -159,7 +156,7 @@ export default function Neurona() {
     const xtwo = +xtwoRef.current!.value
     const resultado = Math.tanh((wone*xone) + (wtwo*xtwo) - error)
     setResult(resultado)
-    console.log("Calculado");
+    console.log(`Calculado: tanh((${wone} * ${xone}) + (${wtwo} * ${xtwo}) - ${error})`);
   };
 
   return (
@@ -293,7 +290,7 @@ export default function Neurona() {
               <TableCell align="right">{e}</TableCell>
               <TableCell align="right">{wone}</TableCell>
               <TableCell align="right">{wtwo}</TableCell>
-              <TableCell align="right">{countRef.current}</TableCell>
+              <TableCell align="right">{iteraciones}</TableCell>
             </TableRow>
           </TableBody>
         </Table>
