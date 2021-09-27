@@ -1,4 +1,5 @@
 import {
+  AppBar,
   Button,
   Container,
   FormControl,
@@ -11,6 +12,7 @@ import {
   TableHead,
   TableRow,
   TextField,
+  Toolbar,
   Typography,
 } from "@material-ui/core";
 import React, { useRef, useState } from "react";
@@ -20,6 +22,7 @@ import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
+      padding: 0,
       display: "flex",
       flexDirection: "column",
       flexWrap: "wrap",
@@ -47,6 +50,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     typo: {
       paddingTop: "2em"
+    },
+    navbar: {
+      margin: 0
     }
   })
 );
@@ -100,9 +106,9 @@ export default function Neurona() {
   };
 
   const entrenar = async (erro: number, e: number, w1: number, w2: number) => {
-    // setIteraciones(iteraciones +1);
+  // setIteraciones(iteraciones +1);
     console.log("Iteracion: ", countRef.current++);
-    if (countRef.current < 100) {
+    if (countRef.current < 1000) {
       console.log("entrenar: ", erro, e, w1, w2);
       // Obtener el valor de la primera salida
       const y1 = Math.round(Math.tanh(1 * w1 + 1 * w2) - erro) < 0 ? -1 : 1;
@@ -110,13 +116,13 @@ export default function Neurona() {
       const y3 = Math.round(Math.tanh(-1 * w1 + 1 * w2) - erro) < 0 ? -1 : 1;
       const y4 = Math.round(Math.tanh(-1 * w1 + -1 * w2) - erro) < 0 ? -1 : 1;
       if (y1 === -1) {
-        await recalcular(w1, w2, e, 1, 1, 1, erro);
+        await recalcular(w1, w2, e, 1, 1, 1, erro, y1);
       } else if (y2 === -1) {
-        await recalcular(w1, w2, e, 1, 1, -1, erro);
+        await recalcular(w1, w2, e, 1, 1, -1, erro, y2);
       } else if (y3 === -1) {
-        await recalcular(w1, w2, e, 1, -1, 1, erro);
+        await recalcular(w1, w2, e, 1, -1, 1, erro, y3);
       } else if (y4 === 1) {
-        await recalcular(w1, w2, e, -1, -1, -1, erro);
+        await recalcular(w1, w2, e, -1, -1, -1, erro, y4);
       } else {
         console.log("EXITOSO");
         cambio(erro, e, w1, w2);
@@ -126,7 +132,7 @@ export default function Neurona() {
     } else {
       console.log("Muchas iteracines");
       cambio(erro, e, w1, w2);
-      alert("Se alcanzó el límite de 100 iteraciones, por favor cambie los valores")
+      alert("Se alcanzó el límite de 1000 iteraciones, por favor cambie los valores")
       await reset();
       return;
     }
@@ -140,12 +146,12 @@ export default function Neurona() {
     y: number,
     x1: number,
     x2: number,
-    err: number
+    err: number, obtenido:number
   ) => {
     console.log("recalcular: ", w1, w2, e, y, x1, x2, err);
-    const newW1 = w1 + 2 * e * y * x1;
-    const newW2 = w2 + 2 * e * y * x2;
-    const newErr = err + 2 * e * y * -1;
+    const newW1 = w1 + e * (y - obtenido)* x1;
+    const newW2 = w2 + e * (y - obtenido)* x2;
+    const newErr = err + e * (y - obtenido)* -1;
     console.log("recalcular2: ", newW1, newW2, newErr, e, y, x1, x2);
     await entrenar(newErr, e, newW1, newW2);
   };
@@ -156,11 +162,16 @@ export default function Neurona() {
     const xtwo = +xtwoRef.current!.value
     const resultado = Math.tanh((wone*xone) + (wtwo*xtwo) - error)
     setResult(resultado)
-    console.log(`Calculado: tanh((${wone} * ${xone}) + (${wtwo} * ${xtwo}) - ${error})`);
+    console.log(`Calculado: tanh((${wone} * ${xone}) + (${wtwo} * ${xtwo}) + ${error})`);
   };
 
   return (
     <Container className={classes.root}>
+      <AppBar position="static">
+        <Toolbar className={classes.navbar}>
+          <Button color="inherit" variant="outlined">Btn</Button>
+        </Toolbar>
+      </AppBar>
       <Container className={classes.top}>
         {/* Esta es la parte del entrenamiento */}
         <Container className={classes.forms}>
