@@ -111,10 +111,10 @@ export default function Neurona() {
     if (countRef.current < 1000) {
       console.log("entrenar: ", erro, e, w1, w2);
       // Obtener el valor de la primera salida
-      const y1 = Math.round(Math.tanh(1 * w1 + 1 * w2) - erro) < 0 ? -1 : 1;
-      const y2 = Math.round(Math.tanh(1 * w1 + -1 * w2) - erro) < 0 ? -1 : 1;
-      const y3 = Math.round(Math.tanh(-1 * w1 + 1 * w2) - erro) < 0 ? -1 : 1;
-      const y4 = Math.round(Math.tanh(-1 * w1 + -1 * w2) - erro) < 0 ? -1 : 1;
+      const y1 = Math.round(Math.tanh(1 * w1 + 1 * w2) + e) < 0 ? -1 : 1;
+      const y2 = Math.round(Math.tanh(1 * w1 + -1 * w2) + e) < 0 ? -1 : 1;
+      const y3 = Math.round(Math.tanh(-1 * w1 + 1 * w2) + e) < 0 ? -1 : 1;
+      const y4 = Math.round(Math.tanh(-1 * w1 + -1 * w2) + e) < 0 ? -1 : 1;
       if (y1 === -1) {
         await recalcular(w1, w2, e, 1, 1, 1, erro, y1);
       } else if (y2 === -1) {
